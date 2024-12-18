@@ -68,10 +68,12 @@ def evaluate_baseline(test_data):
 baseline_errors = evaluate_baseline(test_data)
 
 # Print the results for (b)
+print("PART B")
 print("Baseline Error Rates:")
 print(f"Known Words Error Rate: {baseline_errors[1]:.4f}")
 print(f"Unknown Words Error Rate: {baseline_errors[2]:.4f}")
 print(f"Total Error Rate: {baseline_errors[0]:.4f}")
+print()
 
 
 # (c) Bigram HMM Tagger
@@ -146,23 +148,32 @@ def evaluate_hmm(test_data, transition_probs, emission_probs):
     return 1 - (correct / total)
 
 hmm_error = evaluate_hmm(test_data, transition_probs, emission_probs)
-print(f"HMM Error Rate: {hmm_error:.4f}")
 
 # (d) Add-One Smoothing
 def add_one_smoothing(emission_counts, tag_counts):
     smoothed_probs = {}
-    vocab_size = len(emission_counts)
+    vocab = set(itertools.chain.from_iterable(words.keys() for words in emission_counts.values()))
+    vocab_size = len(vocab)
 
     for tag, words in emission_counts.items():
         smoothed_probs[tag] = {word: (count + 1) / (tag_counts[tag] + vocab_size) for word, count in words.items()}
+        smoothed_probs[tag].update({word: 1 / (tag_counts[tag] + vocab_size) for word in vocab if word not in words})
 
     return smoothed_probs
+
+# Calculate emission counts
+emission_counts = defaultdict(Counter)
+for sentence in train_data:
+    for word, tag in sentence:
+        emission_counts[tag][word] += 1
 
 smoothed_emission_probs = add_one_smoothing(emission_counts, tag_counts)
 hmm_error_smoothed = evaluate_hmm(test_data, transition_probs, smoothed_emission_probs)
 
-print("HMM Error Rate (Original):", hmm_error)
-print("HMM Error Rate (Smoothed):", hmm_error_smoothed)
+print("PART C+D")
+print(f"HMM Error Rate (Original): {hmm_error:.4f}")
+print(f"HMM Error Rate (Smoothed): {hmm_error_smoothed:.4f}")
+print()
 
 # (e) Using pseudo-words
 # i. Design pseudo-words for unknown and low-frequency words
@@ -202,8 +213,9 @@ hmm_error_pseudo = evaluate_hmm(test_data_pseudo, transition_probs_pseudo, emiss
 smoothed_emission_probs_pseudo = add_one_smoothing(emission_counts, tag_counts)
 hmm_error_pseudo_smoothed = evaluate_hmm(test_data_pseudo, transition_probs_pseudo, smoothed_emission_probs_pseudo)
 
-print("HMM Error Rate with Pseudo-Words (MLE):", hmm_error_pseudo)
-print("HMM Error Rate with Pseudo-Words (Smoothed):", hmm_error_pseudo_smoothed)
+print("PART E")
+print(f"HMM Error Rate with Pseudo-Words (MLE): {hmm_error_pseudo:.4f}")
+print(f"HMM Error Rate with Pseudo-Words (Smoothed): {hmm_error_pseudo_smoothed:.4f}")
 
 # Confusion matrix
 def build_confusion_matrix(test_data, transition_probs, emission_probs):
