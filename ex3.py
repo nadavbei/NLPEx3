@@ -69,9 +69,10 @@ baseline_errors = evaluate_baseline(test_data)
 
 # Print the results for (b)
 print("Baseline Error Rates:")
-print(f"Total Error Rate: {baseline_errors[0]:.4f}")
 print(f"Known Words Error Rate: {baseline_errors[1]:.4f}")
 print(f"Unknown Words Error Rate: {baseline_errors[2]:.4f}")
+print(f"Total Error Rate: {baseline_errors[0]:.4f}")
+
 
 # (c) Bigram HMM Tagger
 # i. Training phase: Compute transition and emission probabilities
@@ -145,6 +146,7 @@ def evaluate_hmm(test_data, transition_probs, emission_probs):
     return 1 - (correct / total)
 
 hmm_error = evaluate_hmm(test_data, transition_probs, emission_probs)
+print(f"HMM Error Rate: {hmm_error:.4f}")
 
 # (d) Add-One Smoothing
 def add_one_smoothing(emission_counts, tag_counts):
