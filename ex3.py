@@ -35,7 +35,7 @@ most_likely_tag = {word: max(
 )[0] for word in word_counts}
 
 def predict_most_likely_tag(word):
-    return most_likely_tag.get(word, 'NN')  # Default to 'NN' for unknown words
+    return most_likely_tag.get(word, "NOUN")  # Default to "NOUN" for unknown words
 
 # ii. Compute error rates on the test set
 def evaluate_baseline(test_data):
